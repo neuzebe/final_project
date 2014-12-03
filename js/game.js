@@ -60,6 +60,8 @@ var game_over_text;
 var title_text;
 */
 var KEYCODE_SPACE = 32;
+var KEYCODE_A = 65;
+var KEYCODE_D = 68;
 
 /* POST-REFACTOR WORK */
 
@@ -190,12 +192,8 @@ function updateBackground(event)
  * event listener for key events
  * used to listen for and process the spacebar being pressed
  */
-function keyPressed(event) {
-    switch(event.keyCode) {
-        case KEYCODE_SPACE:	            
-                character.jump();
-            break;
-    }
+function keyPressed(event) {    
+    character.handleInput(event);
     stage.update();
 }
 

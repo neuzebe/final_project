@@ -9,6 +9,8 @@ function Player()
     this.fall_speed = 135;
     this.lives = 3;
     this.score = 0;
+    this.facing_right = true;
+    this.move_speed = 0;
     
     this.init = function()
     {
@@ -20,7 +22,7 @@ function Player()
     }
     
     this.update = function(event)
-    {
+    {        
         var delta = event.delta / 1000;
         if(this.is_player_jumping)
         {
@@ -51,6 +53,10 @@ function Player()
             }
         }     
         
+        
+        if(Math.abs(this.move_speed) > 0)
+            this.image.x += delta * this.move_speed;
+        
         this.checkPlayerBulletCollision();
         this.checkPlayerCoinCollision();
     }
@@ -68,6 +74,9 @@ function Player()
     {
         this.score = 0;
         this.lives = 3;
+        this.move_speed = 0;
+        this.image.x = 60;
+        this.image.y = stage.canvas.height - (this.image.image.height * 0.5) - (background.ground.image.height * 0.95); 
     }
     /*
      * checkCollision(object_one, object_two)
@@ -153,5 +162,32 @@ function Player()
             coin.reset();
         }
     }
-
+    
+    this.handleInput = function(event)
+    {
+        console.log(event.keyCode);
+        switch(event.keyCode) {
+            case KEYCODE_SPACE:	            
+                this.jump();
+                break;
+            case KEYCODE_A:
+                if(this.facing_right)
+                    this.flip();     
+                    this.move_speed = -200;
+                break;
+            case KEYCODE_D:
+                if(!this.facing_right)
+                    this.flip();  
+                    this.move_speed = 200;
+                break;
+            
+        }
+    }
+    
+    this.flip = function()
+    {
+        this.facing_right = !this.facing_right;
+        this.image.scaleX *= -1;
+    }
+    
 }
