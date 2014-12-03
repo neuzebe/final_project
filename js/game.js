@@ -23,47 +23,12 @@
  */
 var stage;
 var queue;
-/*
 
-var bullet_speed = 50;
-var coin_speed = 35;
-
-
-
-
-var background;
-var ground;
-var character;
-var coin;
-var bullet;
-var life;
-
-
-
-var play_btn;
-var help_btn;
-
-var is_player_jumping = false;
-var is_player_falling = false;
-var jump_time = 0.75;
-var jump_counter = 0;
-var jump_speed = 135;
-var fall_speed = 135;
-
-var score = 0;
-var score_text;
-var lives = 3;
-var lives_text;
-
-var menu_text;
-var game_over_text;
-var title_text;
-*/
 var KEYCODE_SPACE = 32;
 var KEYCODE_A = 65;
 var KEYCODE_D = 68;
 
-/* POST-REFACTOR WORK */
+/* POST-REFACTOR VARS */
 
 var MENU = 1;
 var PLAYING = 2;
@@ -80,15 +45,16 @@ var coin = new Coin();
 var bullet = new Bullet();
 var clouds = [];
 var text_manager = new TextManager();
-
 var stage_speed = 40;
+
+var asset_manager = new AssetManager();
 /*
  * preload()
  * preloads all game assets
  */
 function preload() {
     //hook back up to assets
-    setTimeout(function(){init();}, 2000);
+  //  setTimeout(function(){init();}, 2000);
 }
 
 /*

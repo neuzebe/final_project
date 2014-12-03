@@ -1,9 +1,9 @@
-   var queue;
-   
-    queue = new createjs.LoadQueue();
-    queue.installPlugin(createjs.Sound);
-    //queue.addEventListener("complete", init);
-    queue.loadManifest([        
+function AssetManager()
+{              
+    this.queue = new createjs.LoadQueue();
+    this.queue.installPlugin(createjs.Sound);
+    this.queue.addEventListener("complete", init);
+    this.queue.loadManifest([        
         { id: "background", src: "images/background.png"},
         { id: "ground", src: "images/ground.png"},
         { id: "cloud", src: "images/cloud.png"},
@@ -20,3 +20,4 @@
         { id: "gameover", src: "sounds/gameover.ogg"},
         { id: "tree", src: "images/tree.png"}
     ]);
+}

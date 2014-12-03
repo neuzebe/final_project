@@ -4,7 +4,7 @@ function Cloud()
     
     this.init = function()
     {
-        this.image = new createjs.Bitmap(queue.getResult('cloud'));        
+        this.image = new createjs.Bitmap(asset_manager.queue.getResult('cloud'));        
         this.image.regX = this.image.image.width / 2;
         this.image.regY = this.image.image.height / 2;
         this.image.y = (Math.random() * (stage.canvas.height / 2));

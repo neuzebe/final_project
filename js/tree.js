@@ -4,7 +4,7 @@ function Tree()
     
     this.init = function()
     {
-        this.image = new createjs.Bitmap(queue.getResult('tree'));
+        this.image = new createjs.Bitmap(asset_manager.queue.getResult('tree'));
         this.image.regX = this.image.image.width / 2;
         this.image.regY = this.image.image.height / 2;
         this.image.y = stage.canvas.height - (this.image.image.height * 0.5) - (background.ground.image.height * 0.95);

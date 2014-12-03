@@ -5,7 +5,7 @@ function Coin()
     
     this.init = function()
     {        
-        this.image = new createjs.Bitmap(queue.getResult('coin'));
+        this.image = new createjs.Bitmap(asset_manager.queue.getResult('coin'));
         this.image.regX = this.image.image.width / 2;
         this.image.regY = this.image.image.height / 2;        
         this.image.x = 60;

@@ -11,7 +11,7 @@ function TextManager()
     
     this.init = function()
     {
-        this.life_image = new createjs.Bitmap(queue.getResult('life'));
+        this.life_image = new createjs.Bitmap(asset_manager.queue.getResult('life'));
         this.life_image.regX = this.life_image.image.width / 2;
         this.life_image.regY = this.life_image.image.height / 2;
         this.life_image.x = stage.canvas.width - 150;
@@ -45,7 +45,7 @@ function TextManager()
     
     this.showMenu = function()
     {
-        this.play_btn = new createjs.Bitmap(queue.getResult('play_button'));
+        this.play_btn = new createjs.Bitmap(asset_manager.queue.getResult('play_button'));
         this.play_btn.regX = this.play_btn.image.width / 2;
         this.play_btn.regY = this.play_btn.image.height / 2;
         this.play_btn.x = stage.canvas.width / 2;

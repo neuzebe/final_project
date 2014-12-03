@@ -16,7 +16,7 @@ function Player()
     
     this.init = function()
     {
-        this.image = new createjs.Bitmap(queue.getResult('character'));
+        this.image = new createjs.Bitmap(asset_manager.queue.getResult('character'));
         this.image.regX = this.image.image.width / 2;
         this.image.regY = this.image.image.height / 2;
         this.image.x = 60;
@@ -47,7 +47,7 @@ function Player()
             {
                 this.is_player_falling = false;
                 this.jump_counter = 0;
-                this.image.image = queue.getResult('character');
+                this.image.image = asset_manager.queue.getResult('character');
             }
             else
             {
@@ -69,7 +69,7 @@ function Player()
         {        
             this.is_player_jumping = true;
             this.jump_counter = 0;        
-            this.image.image = queue.getResult('character_jump');
+            this.image.image = asset_manager.queue.getResult('character_jump');
         }        
     }
 
