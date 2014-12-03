@@ -25,7 +25,6 @@ function Coin()
     this.reset = function()
     {
         this.image.x = stage.canvas.width + this.image.image.width;
-        this.coin_speed = Math.random() * 25 + 45;  
-        console.log("reset called");
+        this.coin_speed = Math.random() * 25 + 45;          
     }
 }

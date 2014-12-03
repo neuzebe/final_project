@@ -167,7 +167,8 @@ function gameStart() {
             
     text_manager.init();
     text_manager.showMenu();       
-    this.document.onkeydown = keyPressed;
+    this.document.onkeydown = onKeyDown;
+    this.document.onkeyup = onKeyUp;
 }
 
 /*
@@ -192,11 +193,16 @@ function updateBackground(event)
  * event listener for key events
  * used to listen for and process the spacebar being pressed
  */
-function keyPressed(event) {    
-    character.handleInput(event);
+
+function onKeyDown(event) {    
+    character.onKeyDown(event);
     stage.update();
 }
 
+function onKeyUp(event) {    
+    character.onKeyUp(event);
+    stage.update();
+}
 
 function showGameOver()
 {   

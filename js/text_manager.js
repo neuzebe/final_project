@@ -15,8 +15,7 @@ function TextManager()
         this.life_image.regX = this.life_image.image.width / 2;
         this.life_image.regY = this.life_image.image.height / 2;
         this.life_image.x = stage.canvas.width - 150;
-        this.life_image.y = stage.canvas.height - 25;  
-        console.log(this.life_image);
+        this.life_image.y = stage.canvas.height - 25;          
         stage.addChild(this.life_image); 
     
         this.score_text = new createjs.Text("Score: " + character.score, "bold 24px Arial", "#000000");

@@ -10,7 +10,9 @@ function Player()
     this.lives = 3;
     this.score = 0;
     this.facing_right = true;
-    this.move_speed = 0;
+    this.move_speed = 50;
+    this.turn_left = false;    
+    this.turn_right = false;
     
     this.init = function()
     {
@@ -18,8 +20,8 @@ function Player()
         this.image.regX = this.image.image.width / 2;
         this.image.regY = this.image.image.height / 2;
         this.image.x = 60;
-        this.image.y = stage.canvas.height - (this.image.image.height * 0.5) - (background.ground.image.height * 0.95);                  
-    }
+        this.image.y = stage.canvas.height - (this.image.image.height * 0.5) - (background.ground.image.height * 0.95);           
+    }    
     
     this.update = function(event)
     {        
@@ -53,6 +55,7 @@ function Player()
             }
         }     
         
+        this.updateSpeed();
         
         if(Math.abs(this.move_speed) > 0)
             this.image.x += delta * this.move_speed;
@@ -68,6 +71,17 @@ function Player()
             this.jump_counter = 0;        
             this.image.image = queue.getResult('character_jump');
         }        
+    }
+
+
+    this.updateSpeed = function()
+    {
+        if(this.moving_right)
+            this.move_speed = -200;
+        else if(this.moving_left)
+            this.move_speed = 200;
+        else if(!this.moving_left && !this.moving_right)
+            this.move_speed = 0;
     }
 
     this.reset = function()
@@ -163,9 +177,8 @@ function Player()
         }
     }
     
-    this.handleInput = function(event)
-    {
-        console.log(event.keyCode);
+    this.onKeyDown = function(event)
+    {        
         switch(event.keyCode) {
             case KEYCODE_SPACE:	            
                 this.jump();
@@ -173,16 +186,28 @@ function Player()
             case KEYCODE_A:
                 if(this.facing_right)
                     this.flip();     
-                    this.move_speed = -200;
+                this.moving_right = true;
                 break;
             case KEYCODE_D:
                 if(!this.facing_right)
                     this.flip();  
-                    this.move_speed = 200;
-                break;
-            
+                this.moving_left = true;
+                break;            
         }
     }
+    
+    
+    this.onKeyUp = function(event)
+    {        
+        switch(event.keyCode) {
+            case KEYCODE_A:     
+                this.moving_right = false;
+                break;
+            case KEYCODE_D:  
+                this.moving_left = false;
+                break;            
+        }
+    }    
     
     this.flip = function()
     {
