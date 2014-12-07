@@ -8,7 +8,7 @@ function Player()
     this.jump_speed = 135;
     this.fall_speed = 135;
     this.lives = 3;
-    this.score = 0;
+    this.score = 2900;
     this.facing_right = true;
     this.move_speed = 50;
     this.turn_left = false;    
@@ -62,6 +62,8 @@ function Player()
         
         this.checkPlayerBulletCollision();
         this.checkPlayerCoinCollision();
+        if(game_difficulty === MEDIUM_MODE || game_difficulty === HARD_MODE)
+            this.checkPlayerBombCollision();
     }
     this.jump = function()
     {
@@ -86,7 +88,7 @@ function Player()
 
     this.reset = function()
     {
-        this.score = 0;
+        this.score = 3000;
         this.lives = 3;
         this.move_speed = 0;
         this.image.x = 60;
@@ -140,20 +142,25 @@ function Player()
     {
         if(this.checkCollision(bullet))
         {           
-            createjs.Sound.play("damage");
-            if(this.lives === 0)
-            {            
-                game_state = GAME_OVER;
-                createjs.Sound.play("gameover");
-                showGameOver();
-            }
-            else
-                this.lives--;
-
-            text_manager.updateText();
+            this.takeDamage();
             bullet.reset();
         }
     }    
+    
+    this.takeDamage = function()
+    {
+        createjs.Sound.play("damage");
+        if(this.lives === 0)
+        {            
+            game_state = GAME_OVER;
+            createjs.Sound.play("gameover");
+            showGameOver();
+        }
+        else
+            this.lives--;
+
+        text_manager.updateText();        
+    }
 
     /*
      * checks to see if the player has collected a pokeball
@@ -174,6 +181,19 @@ function Player()
 
             text_manager.updateText();
             coin.reset();
+        }
+    }
+    
+    this.checkPlayerBombCollision = function()
+    {
+        if(!balloon.bomb.active)
+            return;
+        
+        if(this.checkCollision((balloon.bomb)))
+        {
+            this.takeDamage();
+            balloon.bomb.active = false;
+            balloon.bomb.selfDestruct();
         }
     }
     

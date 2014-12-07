@@ -2,7 +2,7 @@ function Bullet()
 {
     this.image;
     this.bullet_speed = 50;
-    
+
     this.init = function()
     {
         this.image = new createjs.Bitmap(asset_manager.queue.getResult('bullet'));
@@ -14,9 +14,9 @@ function Bullet()
     }
     
     this.update = function(event)
-    {
-        var delta = event.delta / 1000;
-
+    {        
+        var delta = event.delta / 1000;          
+        
         this.image.x -= delta * this.bullet_speed * 3;
 
         if(this.image.x + this.image.image.width < 0)
@@ -28,4 +28,6 @@ function Bullet()
         bullet_speed = Math.random() * 30 + 60;
         this.image.x = stage.canvas.width + this.image.image.width;        
     }
+    
+
 }

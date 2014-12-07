@@ -28,6 +28,10 @@ var KEYCODE_SPACE = 32;
 var KEYCODE_A = 65;
 var KEYCODE_D = 68;
 
+var EASY_MODE = 1;
+var MEDIUM_MODE = 2;
+var HARD_MODE = 3;
+var game_difficulty = EASY_MODE;
 /* POST-REFACTOR VARS */
 
 var MENU = 1;
@@ -43,11 +47,19 @@ var trees = [];
 var character = new Player();
 var coin = new Coin();
 var bullet = new Bullet();
+var balloon = new Balloon();
+var boss = new Boss();
 var clouds = [];
 var text_manager = new TextManager();
 var stage_speed = 40;
 
 var asset_manager = new AssetManager();
+
+/* Work towards spritesheet */
+
+
+
+
 /*
  * preload()
  * preloads all game assets
@@ -63,6 +75,18 @@ function preload() {
  */
 function init() {
     stage = new createjs.Stage(document.getElementById("canvas"));
+    
+    
+    var data = {
+    images: ["images/batman.gif"],
+    frames: {width: 33, height: 47},
+    animations: {idle: [0, 5], run: [9,16], jump: [19,33,19]}
+}
+
+
+var spritesheet = new createjs.SpriteSheet(data);
+var animation = new createjs.Sprite(spritesheet, "idle");
+    
     stage.enableMouseOver(20);
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", handleTick);    
@@ -86,7 +110,17 @@ function handleTick(event) {
             updateBackground(event);            
             coin.update(event);
             bullet.update(event);
-            character.update(event);            
+            character.update(event);
+            if(game_difficulty === MEDIUM_MODE || game_difficulty === HARD_MODE)
+            {
+                balloon.update(event);
+            }
+            
+            if(game_difficulty === HARD_MODE)
+            {
+                if(character.score >= 3000 && !boss.active)                
+                    boss.init();
+            }
             break;
         case GAME_OVER:           
             break;
@@ -121,18 +155,10 @@ function gameStart() {
         trees[i].init();                
         stage.addChild(trees[i].image);         
     }    
-    
-    character.init();                 
-    stage.addChild(character.image); 
-    
-    coin.init();
-    stage.addChild(coin.image);               
-        
-    bullet.init();
-    stage.addChild(bullet.image);    
-            
+                                    
     text_manager.init();
     text_manager.showMenu();       
+    
     this.document.onkeydown = onKeyDown;
     this.document.onkeyup = onKeyUp;
 }
@@ -160,7 +186,7 @@ function updateBackground(event)
  * used to listen for and process the spacebar being pressed
  */
 
-function onKeyDown(event) {    
+function onKeyDown(event) {        
     character.onKeyDown(event);
     stage.update();
 }
@@ -172,6 +198,19 @@ function onKeyUp(event) {
 
 function showGameOver()
 {   
+    stage.removeChild(character.image);
+    stage.removeChild(coin.image);
+    stage.removeChild(bullet.image);
+    if(game_difficulty === MEDIUM_MODE || game_difficulty === HARD_MODE)
+    {
+        stage.removeChild(balloon.image);
+        stage.removeChild(balloon.bomb.image);
+    }
+    if(game_difficulty === HARD_MODE)
+    {
+        console.log("remove boss");
+        stage.removeChild(boss.image);
+    }    
     text_manager.showGameOver();
 }
 
@@ -182,17 +221,45 @@ function showGameOver()
  * resets the score and life display, and resets the bullet and pokeball
  */
 
-function playGame()
+function playGame(difficulty)
 {
     text_manager.removeMenuItems();
-
+            
+    game_state = PLAYING;
+    game_difficulty = difficulty;
+    
+    bullet.init();
+    stage.addChild(bullet.image); 
+    
+    character.init();
+    stage.addChild(character.image); 
+    
+    coin.init();
+    stage.addChild(coin.image);   
+     
+    if(game_difficulty === MEDIUM_MODE)
+    {
+        bullet.bullet_speed = 75;
+        
+        balloon.init();
+        balloon.speed = 40;
+                
+        stage.addChild(balloon.image);
+    }
+    else if(game_difficulty === HARD_MODE)
+    {        
+        balloon.init();
+        balloon.speed = 60;
+                
+        stage.addChild(balloon.image);
+    }
     
     
     bullet.reset();
     coin.reset();
-    character.reset();
+    character.reset();    
+    
     text_manager.updateText();
-    game_state = PLAYING;
     
     for(var i = 0; i < cloud_count; i++)
         stage.addChild(clouds[i].image);
