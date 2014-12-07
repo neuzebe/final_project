@@ -27,6 +27,7 @@ var queue;
 var KEYCODE_SPACE = 32;
 var KEYCODE_A = 65;
 var KEYCODE_D = 68;
+var KEYCODE_F = 70;
 
 var EASY_MODE = 1;
 var MEDIUM_MODE = 2;
@@ -186,7 +187,7 @@ function updateBackground(event)
  * used to listen for and process the spacebar being pressed
  */
 
-function onKeyDown(event) {        
+function onKeyDown(event) {      
     character.onKeyDown(event);
     stage.update();
 }

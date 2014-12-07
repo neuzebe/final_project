@@ -36,6 +36,7 @@ function Bomb()
     
     this.selfDestruct = function()
     {
+        this.active = false;
         stage.removeChild(this.image);
     }
 }

@@ -14,7 +14,7 @@ function TextManager()
         this.life_image = new createjs.Bitmap(asset_manager.queue.getResult('life'));
         this.life_image.regX = this.life_image.image.width / 2;
         this.life_image.regY = this.life_image.image.height / 2;
-        this.life_image.x = stage.canvas.width - 150;
+        this.life_image.x = 250;
         this.life_image.y = stage.canvas.height - 25;          
         stage.addChild(this.life_image); 
     
@@ -24,7 +24,7 @@ function TextManager()
         stage.addChild(this.score_text);
 
         this.lives_text = new createjs.Text("x" + character.lives, "bold 24px Arial", "#000000");
-        this.lives_text.x = stage.canvas.width - 130;
+        this.lives_text.x = 270;
         this.lives_text.y = stage.canvas.height - 35;     
         stage.addChild(this.lives_text);    
 

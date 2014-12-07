@@ -20,10 +20,12 @@ function AssetManager()
         { id: "bullet", src: "images/bullet.png"},
         { id: "bomb", src: "images/bomb.png"},
         { id: "boss", src: "images/boss.png"},
+        { id: "laser", src: "images/laser.png"},
         { id: "damage", src: "sounds/damage.ogg"},
         { id: "mushroom", src: "sounds/powerup.ogg"},
         { id: "yahoo", src: "sounds/yahoo.ogg"},
         { id: "gameover", src: "sounds/gameover.ogg"},
+        { id: "laser_shot", src: "sounds/laser.ogg"},
         { id: "tree", src: "images/tree.png"}
     ]);
 }

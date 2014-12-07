@@ -14,7 +14,7 @@ function Bullet()
     }
     
     this.update = function(event)
-    {        
+    {                
         var delta = event.delta / 1000;          
         
         this.image.x -= delta * this.bullet_speed * 3;
@@ -25,7 +25,7 @@ function Bullet()
     
     this.reset = function()
     {
-        bullet_speed = Math.random() * 30 + 60;
+        this.bullet_speed = Math.random() * 30 + 60;
         this.image.x = stage.canvas.width + this.image.image.width;        
     }
     

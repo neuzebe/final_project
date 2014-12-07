@@ -1,6 +1,7 @@
 function Player()
 {
     this.image;
+    this.laser;
     this.is_player_jumping = false;
     this.is_player_falling = false;
     this.jump_counter = 0;
@@ -13,9 +14,12 @@ function Player()
     this.move_speed = 50;
     this.turn_left = false;    
     this.turn_right = false;
+    this.timer = 3;
+    this.shoot_cooldown = 2;    
     
     this.init = function()
     {
+        this.laser = new Laser();
         this.image = new createjs.Bitmap(asset_manager.queue.getResult('character'));
         this.image.regX = this.image.image.width / 2;
         this.image.regY = this.image.image.height / 2;
@@ -26,6 +30,8 @@ function Player()
     this.update = function(event)
     {        
         var delta = event.delta / 1000;
+        this.timer += delta;
+               
         if(this.is_player_jumping)
         {
             this.jump_counter += delta;
@@ -59,6 +65,12 @@ function Player()
         
         if(Math.abs(this.move_speed) > 0)
             this.image.x += delta * this.move_speed;
+        
+        if(this.laser.active)
+        {
+            this.laser.update(event);
+            this.checkLaserBulletCollision();
+        }
         
         this.checkPlayerBulletCollision();
         this.checkPlayerCoinCollision();
@@ -99,16 +111,16 @@ function Player()
      * utility function to determine whether two on-stage objects
      * are colliding
      */
-    this.checkCollision = function(object)
+    this.checkCollision = function(object_one, object_two)
     {
         var p1 = new createjs.Point();
         var p2 = new createjs.Point();
-        p1.x = this.image.x;
-        p1.y = this.image.y;
-        p2.x = object.image.x;
-        p2.y = object.image.y;
+        p1.x = object_one.image.x;
+        p1.y = object_one.image.y;
+        p2.x = object_two.image.x;
+        p2.y = object_two.image.y;
 
-        return (this.distanceBetween(p1, p2) < ((this.image.image.height/2) + (object.image.image.height/2)));        
+        return (this.distanceBetween(p1, p2) < ((this.image.image.height/2) + (object_two.image.image.height/2)));        
     }
     
     /*
@@ -140,9 +152,19 @@ function Player()
      */
     this.checkPlayerBulletCollision = function()
     {
-        if(this.checkCollision(bullet))
+        if(this.checkCollision(this, bullet))
         {           
             this.takeDamage();
+            bullet.reset();
+        }
+    }    
+    
+    this.checkLaserBulletCollision = function()
+    {
+        if(this.checkCollision(this.laser, bullet))
+        {                       
+            this.laser.selfDestruct();
+            this.laser = new Laser();
             bullet.reset();
         }
     }    
@@ -168,7 +190,7 @@ function Player()
      */
     this.checkPlayerCoinCollision = function()
     {
-        if(this.checkCollision(coin))
+        if(this.checkCollision(this, coin))
         {                
             createjs.Sound.play("yahoo");        
 
@@ -189,11 +211,11 @@ function Player()
         if(!balloon.bomb.active)
             return;
         
-        if(this.checkCollision((balloon.bomb)))
+        if(this.checkCollision(this, balloon.bomb))
         {
-            this.takeDamage();
-            balloon.bomb.active = false;
+            this.takeDamage();            
             balloon.bomb.selfDestruct();
+            balloon.bomb = new Bomb();
         }
     }
     
@@ -212,11 +234,17 @@ function Player()
                 if(!this.facing_right)
                     this.flip();  
                 this.moving_left = true;
-                break;            
+                break;  
+            case KEYCODE_F:
+                if(this.timer >= this.shoot_cooldown)
+                {
+                    this.shoot();
+                    this.timer = 0;
+                } 
+            break;
         }
     }
-    
-    
+        
     this.onKeyUp = function(event)
     {        
         switch(event.keyCode) {
@@ -235,4 +263,13 @@ function Player()
         this.image.scaleX *= -1;
     }
     
+    this.shoot = function()
+    {
+        this.laser.init(this.image.x, this.image.y);
+        if(!this.facing_right)
+            this.laser.flip();
+        stage.addChild(this.laser.image);
+        createjs.Sound.play("laser_shot");
+        
+    }
 }
