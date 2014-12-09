@@ -70,6 +70,7 @@ function Player()
         {
             this.laser.update(event);
             this.checkLaserBulletCollision();
+            this.checkLaserBossCollision();
         }
         
         this.checkPlayerBulletCollision();
@@ -100,7 +101,7 @@ function Player()
 
     this.reset = function()
     {
-        this.score = 3000;
+        this.score = 2900;
         this.lives = 3;
         this.move_speed = 0;
         this.image.x = 60;
@@ -167,7 +168,18 @@ function Player()
             this.laser = new Laser();
             bullet.reset();
         }
-    }    
+    }  
+    
+    this.checkLaserBossCollision = function()
+    {
+        if(this.laser.active)
+            if(this.checkCollision(this.laser, boss))
+            {                       
+                this.laser.selfDestruct();
+                this.laser = new Laser();
+                boss.takeDamage();
+            }
+    }     
     
     this.takeDamage = function()
     {
@@ -236,7 +248,7 @@ function Player()
                 this.moving_left = true;
                 break;  
             case KEYCODE_F:
-                if(this.timer >= this.shoot_cooldown)
+                if(this.timer >= this.shoot_cooldown && game_difficulty === HARD_MODE)
                 {
                     this.shoot();
                     this.timer = 0;

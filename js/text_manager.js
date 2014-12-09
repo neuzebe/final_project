@@ -8,6 +8,8 @@ function TextManager()
     this.game_over_text;
     this.lives_text;
     this.score_text;
+    this.boss_text;
+    this.boss_life;
     
     this.init = function()
     {
@@ -17,16 +19,26 @@ function TextManager()
         this.life_image.x = 250;
         this.life_image.y = stage.canvas.height - 25;          
         stage.addChild(this.life_image); 
+        
+        this.lives_text = new createjs.Text("x" + character.lives, "bold 24px Arial", "#000000");
+        this.lives_text.x = 270;
+        this.lives_text.y = stage.canvas.height - 35;     
+        stage.addChild(this.lives_text);         
+        
+        this.boss_life = new createjs.Bitmap(asset_manager.queue.getResult('boss_life'));
+        this.boss_life.regX = this.boss_life.image.width / 2;
+        this.boss_life.regY = this.boss_life.image.height / 2;
+        this.boss_life.x = 450;
+        this.boss_life.y = stage.canvas.height - 25;          
+                        
+        this.boss_text = new createjs.Text("x" + boss.lives, "bold 24px Arial", "#000000");
+        this.boss_text.x = 470;
+        this.boss_text.y = stage.canvas.height - 35;                    
     
         this.score_text = new createjs.Text("Score: " + character.score, "bold 24px Arial", "#000000");
         this.score_text.x = 30;
         this.score_text.y = stage.canvas.height - 35;     
-        stage.addChild(this.score_text);
-
-        this.lives_text = new createjs.Text("x" + character.lives, "bold 24px Arial", "#000000");
-        this.lives_text.x = 270;
-        this.lives_text.y = stage.canvas.height - 35;     
-        stage.addChild(this.lives_text);    
+        stage.addChild(this.score_text);   
 
         this.game_over_text = new createjs.Text("GAME OVER!\n Your Score is " + character.score, "bold 24px Arial", "#ffffff");
         this.game_over_text.x = 50;
@@ -41,6 +53,11 @@ function TextManager()
     {        
         this.score_text.text = "Score: " + character.score;
         this.lives_text.text = "x" + character.lives;
+    }
+    
+    this.updateBossText = function()
+    {        
+        this.boss_text.text = "x" + boss.lives;        
     }
     
     this.showMenu = function()
@@ -115,5 +132,11 @@ function TextManager()
         stage.removeChild(this.menu_text);
         stage.removeChild(this.game_over_text);
         stage.removeChild(this.title_text);        
+    }
+    
+    this.addBossLife = function()
+    {
+        stage.addChild(this.boss_life); 
+        stage.addChild(this.boss_text); 
     }
 }

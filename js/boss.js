@@ -5,6 +5,7 @@ function Boss()
     this.active = false;
     this.timer = 0;
     this.shoot_cooldown = 2;
+    this.lives = 1;
     
     this.init = function()
     {
@@ -16,6 +17,21 @@ function Boss()
         this.image.y = 395;
         stage.addChild(this.image);
     }
+    
+    this.takeDamage = function()
+    {
+        createjs.Sound.play("yeah");
+        if(this.lives === 0)
+        {            
+            game_state = GAME_WON;
+            createjs.Sound.play("win");
+            showGameWon();
+        }
+        else
+            this.lives--;
+
+        text_manager.updateBossText();        
+    }    
     
     this.update = function(event)
     {
@@ -33,6 +49,7 @@ function Boss()
     this.reset = function()
     {
         this.speed = Math.random() * 30 + 60;
+        this.lives = 3;
         this.image.x = stage.canvas.width + this.image.image.width;        
     }
     

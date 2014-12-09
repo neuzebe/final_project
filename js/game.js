@@ -38,6 +38,7 @@ var game_difficulty = EASY_MODE;
 var MENU = 1;
 var PLAYING = 2;
 var GAME_OVER = 3;
+var GAME_WON = 4;
 var game_state = MENU;
 
 var cloud_count = 3;
@@ -119,8 +120,11 @@ function handleTick(event) {
             
             if(game_difficulty === HARD_MODE)
             {
-                if(character.score >= 3000 && !boss.active)                
+                if(character.score >= 3000 && !boss.active)  
+                {
                     boss.init();
+                    text_manager.addBossLife();
+                }
             }
             break;
         case GAME_OVER:           
@@ -213,6 +217,16 @@ function showGameOver()
         stage.removeChild(boss.image);
     }    
     text_manager.showGameOver();
+}
+
+function showGameWon()
+{
+    var victory = new createjs.Bitmap(asset_manager.queue.getResult('victory'));
+    victory.regX = victory.image.width / 2;
+    victory.regY = victory.image.height / 2;
+    victory.x = stage.canvas.width / 2;
+    victory.y = stage.canvas.height / 2;
+    stage.addChild(victory); 
 }
 
 /*
