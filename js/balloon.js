@@ -1,3 +1,11 @@
+/*
+ * Author: Noel Euzebe | 300709334
+ * COMP 397
+ * Final Project: The Dark Knight's Patrols
+ * File: balloon.js
+ * Last Modified By: Noel Euzebe On Dec 7, 2014
+ * Description: describes the attributes and behaviours of the Balloon enemy
+ */
 function Balloon()
 {
     this.image;
@@ -6,6 +14,7 @@ function Balloon()
     this.shoot_cooldown = 2;
     this.bomb;
     
+    //sets up initial values and image
     this.init = function()
     {
         this.bomb = new Bomb();
@@ -17,6 +26,7 @@ function Balloon()
 
     }
     
+    //updates balloon position every frame, and controls when to drop bombs
     this.update = function(event)
     {        
         var delta = event.delta / 1000;
@@ -37,12 +47,14 @@ function Balloon()
             this.reset();        
     }
     
+    //inverts balloon direction of movement once it reaches the edge of the screen
     this.reset = function()
     {
         
         this.speed *= -1;           
     }
     
+    //drops a bomb towards the player
     this.shoot = function()
     {               
         this.bomb.init(this.image.x, this.image.y);

@@ -1,25 +1,10 @@
-/* Version 1.0
- * Bootstrapped from SlotMachine code
- * Version 1.1
- * Added assets on screen
- * Version 1.2
- * Got on-screen assets moving and resetting
- * Version 1.3
- * Added player input, character jumps in response to input
- * Version 1.4
- * Added collision detection
- * Version 1.5
- * Added scoring and lives
- * Version 1.5
- * Added menu, playing and gameover state
- * Version 1.6
- * Refactored, cleaned up
- * Noel Euzebe 300709334
- * Last Modified By: Noel Euzebe
- * Date Last Modified: 10th Nov 2014
- * ---------
- * game.js
- .
+/*
+ * Author: Noel Euzebe | 300709334
+ * COMP 397
+ * Final Project: The Dark Knight's Patrols
+ * File: game.js
+ * Last Modified By: Noel Euzebe On Dec 10, 2014
+ * Description: main controller of the game, sets up all major objects, the stage and the state handler
  */
 var stage;
 var queue;
@@ -56,20 +41,8 @@ var text_manager = new TextManager();
 var stage_speed = 40;
 
 var asset_manager = new AssetManager();
+var collision_manager = new CollisionManager();
 
-/* Work towards spritesheet */
-
-
-
-
-/*
- * preload()
- * preloads all game assets
- */
-function preload() {
-    //hook back up to assets
-  //  setTimeout(function(){init();}, 2000);
-}
 
 /*
  * init()
@@ -78,21 +51,11 @@ function preload() {
 function init() {
     stage = new createjs.Stage(document.getElementById("canvas"));
     
-    
-    var data = {
-    images: ["images/batman.gif"],
-    frames: {width: 33, height: 47},
-    animations: {idle: [0, 5], run: [9,16], jump: [19,33,19]}
-}
 
-
-var spritesheet = new createjs.SpriteSheet(data);
-var animation = new createjs.Sprite(spritesheet, "idle");
-    
     stage.enableMouseOver(20);
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", handleTick);    
-    gameStart();    
+    gameStart();       
 }
 
 
@@ -119,12 +82,15 @@ function handleTick(event) {
             }
             
             if(game_difficulty === HARD_MODE)
-            {
+            {                
                 if(character.score >= 3000 && !boss.active)  
                 {
                     boss.init();
                     text_manager.addBossLife();
                 }
+                
+                if(boss.active)
+                    boss.update(event);
             }
             break;
         case GAME_OVER:           
@@ -188,10 +154,10 @@ function updateBackground(event)
 
 /*
  * event listener for key events
- * used to listen for and process the spacebar being pressed
+ * used to listen for and process player input
  */
 
-function onKeyDown(event) {      
+function onKeyDown(event) {        
     character.onKeyDown(event);
     stage.update();
 }
@@ -201,6 +167,11 @@ function onKeyUp(event) {
     stage.update();
 }
 
+    /*
+    * showGameOver()
+    * called when the player's lives run out
+    * shows the game over text, removes objects from stage
+    */
 function showGameOver()
 {   
     stage.removeChild(character.image);
@@ -212,13 +183,20 @@ function showGameOver()
         stage.removeChild(balloon.bomb.image);
     }
     if(game_difficulty === HARD_MODE)
-    {
-        console.log("remove boss");
+    {        
+        
+        stage.removeChild(text_manager.boss_life); 
+        stage.removeChild(text_manager.boss_text);          
         stage.removeChild(boss.image);
     }    
     text_manager.showGameOver();
 }
 
+/*
+ * showGameWon
+ * called when the player has won the game
+ * Shows victory text and disables gameplay
+ */
 function showGameWon()
 {
     var victory = new createjs.Bitmap(asset_manager.queue.getResult('victory'));
@@ -265,7 +243,7 @@ function playGame(difficulty)
     {        
         balloon.init();
         balloon.speed = 60;
-                
+        boss = new Boss();        
         stage.addChild(balloon.image);
     }
     

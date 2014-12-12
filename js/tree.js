@@ -1,7 +1,16 @@
+/*
+ * Author: Noel Euzebe | 300709334
+ * COMP 397
+ * Final Project: The Dark Knight's Patrols
+ * File: tree.js
+ * Last Modified By: Noel Euzebe On Dec 3, 2014
+ * Description: defines the trees that appear in the background of the stage
+ */
 function Tree()
 {
     this.image;
     
+    //sets up initial values image and position
     this.init = function()
     {
         this.image = new createjs.Bitmap(asset_manager.queue.getResult('tree'));
@@ -11,6 +20,7 @@ function Tree()
         this.image.x = (Math.random() * (stage.canvas.width)) + 1;            
     }
     
+    //updates tree position on screen
     this.update = function(event)
     {
         var delta = event.delta / 1000;
@@ -19,6 +29,7 @@ function Tree()
             this.reset();             
     }
     
+    //resets tree position when it leaves the screen
     this.reset = function()
     {
        this.image.x = stage.canvas.width + this.image.image.width;

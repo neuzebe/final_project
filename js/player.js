@@ -1,3 +1,11 @@
+/*
+ * Author: Noel Euzebe | 300709334
+ * COMP 397
+ * Final Project: The Dark Knight's Patrols
+ * File: player.js
+ * Last Modified By: Noel Euzebe On Dec 9, 2014
+ * Description: Describes the Player
+ */
 function Player()
 {
     this.image;
@@ -7,9 +15,10 @@ function Player()
     this.jump_counter = 0;
     this.jump_time = 0.74;
     this.jump_speed = 135;
-    this.fall_speed = 135;
+    this.fall_speed = 200;
+    this.fall_time = 0.4995;
     this.lives = 3;
-    this.score = 2900;
+    this.score = 0;
     this.facing_right = true;
     this.move_speed = 50;
     this.turn_left = false;    
@@ -17,6 +26,7 @@ function Player()
     this.timer = 3;
     this.shoot_cooldown = 2;    
     
+    //sets up initial values and position as well as player's image
     this.init = function()
     {
         this.laser = new Laser();
@@ -27,11 +37,26 @@ function Player()
         this.image.y = stage.canvas.height - (this.image.image.height * 0.5) - (background.ground.image.height * 0.95);           
     }    
     
+    //called every frame to update player position, determine if player is jumping
+    //or falling, checks for collisions and updates whether player can shoot
     this.update = function(event)
     {        
         var delta = event.delta / 1000;
         this.timer += delta;
+        
+        //check if player within bounds, if not force him back in
+        if(this.image.x <this.image.image.width)
+            this.image.x = this.image.image.width;
+        else if(this.image.x > stage.canvas.width - this.image.image.width)
+            this.image.x = stage.canvas.width - this.image.image.width;
                
+        if(this.image.y > stage.canvas.height - (this.image.image.height * 0.5) - (background.ground.image.height * 0.95))       
+            this.image.y = stage.canvas.height - (this.image.image.height * 0.5) - (background.ground.image.height * 0.95);           
+        
+        if(this.image.y < stage.canvas.height - (this.image.image.height * 0.5) - (background.ground.image.height * 0.95) && !this.is_player_jumping && !this.is_player_falling)   
+            this.image.y = stage.canvas.height - (this.image.image.height * 0.5) - (background.ground.image.height * 0.95);           
+        
+        //handle player jumping by increasing height
         if(this.is_player_jumping)
         {
             this.jump_counter += delta;
@@ -46,10 +71,10 @@ function Player()
                 this.image.y -= delta * this.jump_speed;
             }
         }    
-        else if(this.is_player_falling)
+        else if(this.is_player_falling) //handle player falling by decreasing height and switching image
         {
             this.jump_counter += delta;
-            if(this.jump_counter >= this.jump_time)
+            if(this.jump_counter >= this.fall_time)
             {
                 this.is_player_falling = false;
                 this.jump_counter = 0;
@@ -66,18 +91,20 @@ function Player()
         if(Math.abs(this.move_speed) > 0)
             this.image.x += delta * this.move_speed;
         
-        if(this.laser.active)
-        {
+        //updates the player's laser if it is active
+        if(this.laser.active)        
             this.laser.update(event);
-            this.checkLaserBulletCollision();
-            this.checkLaserBossCollision();
-        }
         
+        //handle collision checks
         this.checkPlayerBulletCollision();
         this.checkPlayerCoinCollision();
+        
         if(game_difficulty === MEDIUM_MODE || game_difficulty === HARD_MODE)
             this.checkPlayerBombCollision();
     }
+    
+    //called when the player is about to jump, changes character image and sets 
+    //player status to jumping
     this.jump = function()
     {
         if(!this.is_player_jumping && !this.is_player_falling)
@@ -88,7 +115,7 @@ function Player()
         }        
     }
 
-
+    //based on player input, determines how to set player speed
     this.updateSpeed = function()
     {
         if(this.moving_right)
@@ -99,52 +126,22 @@ function Player()
             this.move_speed = 0;
     }
 
+    //resets player position, speed, lives and score
     this.reset = function()
     {
-        this.score = 2900;
+        this.score = 0;
         this.lives = 3;
         this.move_speed = 0;
         this.image.x = 60;
         this.image.y = stage.canvas.height - (this.image.image.height * 0.5) - (background.ground.image.height * 0.95); 
     }
-    /*
-     * checkCollision(object_one, object_two)
-     * utility function to determine whether two on-stage objects
-     * are colliding
-     */
-    this.checkCollision = function(object_one, object_two)
+    
+    //reinstantiates player laser when it leaves screen or collides with an enemy
+    this.resetLaser = function()
     {
-        var p1 = new createjs.Point();
-        var p2 = new createjs.Point();
-        p1.x = object_one.image.x;
-        p1.y = object_one.image.y;
-        p2.x = object_two.image.x;
-        p2.y = object_two.image.y;
-
-        return (this.distanceBetween(p1, p2) < ((this.image.image.height/2) + (object_two.image.image.height/2)));        
+        this.laser = new Laser();
     }
     
-    /*
-    * distanceBetween(point1, point2)
-    * utility function to calculate the distance between two objects
-    * on the stage
-    */
-    this.distanceBetween = function(p1, p2)
-    {
-        var result = 0;
-        var xPoints = 0;
-        var yPoints = 0;
-
-        xPoints = p2.x - p1.x;
-        xPoints = xPoints * xPoints;
-
-        yPoints = p2.y - p1.y;
-        yPoints = yPoints * yPoints;
-
-        result = Math.sqrt(xPoints + yPoints);
-
-        return result;    
-    }    
     
     /*
      * checkPlayerBulletCollision
@@ -153,34 +150,14 @@ function Player()
      */
     this.checkPlayerBulletCollision = function()
     {
-        if(this.checkCollision(this, bullet))
+        if(collision_manager.checkCollision(this, bullet))
         {           
             this.takeDamage();
             bullet.reset();
         }
-    }    
+    }         
     
-    this.checkLaserBulletCollision = function()
-    {
-        if(this.checkCollision(this.laser, bullet))
-        {                       
-            this.laser.selfDestruct();
-            this.laser = new Laser();
-            bullet.reset();
-        }
-    }  
-    
-    this.checkLaserBossCollision = function()
-    {
-        if(this.laser.active)
-            if(this.checkCollision(this.laser, boss))
-            {                       
-                this.laser.selfDestruct();
-                this.laser = new Laser();
-                boss.takeDamage();
-            }
-    }     
-    
+    //called when an enemy has done damage to the player, reduces player health/life
     this.takeDamage = function()
     {
         createjs.Sound.play("damage");
@@ -202,7 +179,7 @@ function Player()
      */
     this.checkPlayerCoinCollision = function()
     {
-        if(this.checkCollision(this, coin))
+        if(collision_manager.checkCollision(this, coin))
         {                
             createjs.Sound.play("yahoo");        
 
@@ -218,12 +195,16 @@ function Player()
         }
     }
     
+    /*
+     * checks to see if the player has collected a bomb
+     * and handles the life decrease and sound effects if so
+     */    
     this.checkPlayerBombCollision = function()
     {
         if(!balloon.bomb.active)
             return;
         
-        if(this.checkCollision(this, balloon.bomb))
+        if(collision_manager.checkCollision(this, balloon.bomb))
         {
             this.takeDamage();            
             balloon.bomb.selfDestruct();
@@ -231,6 +212,7 @@ function Player()
         }
     }
     
+    //process player input
     this.onKeyDown = function(event)
     {        
         switch(event.keyCode) {
@@ -238,17 +220,23 @@ function Player()
                 this.jump();
                 break;
             case KEYCODE_A:
-                if(this.facing_right)
-                    this.flip();     
-                this.moving_right = true;
+                if(game_difficulty === HARD_MODE || game_difficulty === MEDIUM_MODE) //only allow movement if difficulty is medium or higher
+                {
+                    if(this.facing_right)
+                        this.flip();     
+                    this.moving_right = true;
+                }
                 break;
             case KEYCODE_D:
-                if(!this.facing_right)
-                    this.flip();  
-                this.moving_left = true;
-                break;  
+                if(game_difficulty === HARD_MODE || game_difficulty === MEDIUM_MODE)//only allow movement if difficulty is medium or higher
+                {
+                    if(!this.facing_right)
+                        this.flip();  
+                    this.moving_left = true;
+                    break;                    
+                }
             case KEYCODE_F:
-                if(this.timer >= this.shoot_cooldown && game_difficulty === HARD_MODE)
+                if(this.timer >= this.shoot_cooldown && game_difficulty === HARD_MODE) //only allow laser fire if difficulty is hard
                 {
                     this.shoot();
                     this.timer = 0;
@@ -257,6 +245,7 @@ function Player()
         }
     }
         
+    //updates when A or D keys are released so player's movement is halted
     this.onKeyUp = function(event)
     {        
         switch(event.keyCode) {
@@ -269,19 +258,18 @@ function Player()
         }
     }    
     
+    //flips player sprite if he or she is facing the wrong direction
     this.flip = function()
     {
         this.facing_right = !this.facing_right;
         this.image.scaleX *= -1;
     }
     
+    //fires a laser
     this.shoot = function()
     {
         this.laser.init(this.image.x, this.image.y);
         if(!this.facing_right)
-            this.laser.flip();
-        stage.addChild(this.laser.image);
-        createjs.Sound.play("laser_shot");
-        
+            this.laser.flip();                        
     }
 }
